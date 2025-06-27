@@ -1,0 +1,12 @@
+name = "LicenseClient"
+uuid = "1ccff102-4705-425b-ad62-9d261ff65b12"
+version = "1.1.0"
+authors = ["Christian Dengler <denglerchr@gmail.com>"]
+
+[deps]
+Libdl = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[compat]
+Libdl = "1.11.0"
+Test = "1.11.0"
