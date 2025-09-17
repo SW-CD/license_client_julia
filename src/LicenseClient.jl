@@ -1,9 +1,10 @@
 module LicenseClient
 
-export ClientDataStore, LicenseClientException, parse_secret_file, authenticate, keepalive, release, set_insecure_tls
+export ClientDataStore, LicenseClientException, parse_secret_file, authenticate, keepalive, release, set_insecure_tls, set_timeout
 export get_client_id, get_server_url, get_session_token, get_custom_content, status_to_string
 
 import Libdl
+using Dates
 
 # --- Configuration ---
 # const DEFAULT_LIB_NAME = raw"..."
@@ -95,6 +96,30 @@ end
 function set_insecure_tls(store::ClientDataStore, allow::Bool)
     ccall((:lic_client_set_insecure_tls, liblicclient_path), Cvoid, (Ptr{Cvoid}, Cuchar), store.handle, allow)
 end
+
+"""
+    set_timeout(store::ClientDataStore, milliseconds::Integer)
+
+Sets the network timeout for all server requests.
+"""
+function set_timeout(store::ClientDataStore, milliseconds::Integer)
+    if milliseconds < 0
+        throw(ArgumentError("Timeout must be non-negative."))
+    end
+    # The C function expects a 64-bit integer
+    ccall((:lic_client_set_timeout, liblicclient_path), Cvoid, (Ptr{Cvoid}, Cintmax_t), store.handle, milliseconds)
+end
+
+"""
+    set_timeout(store::ClientDataStore, period::Period)
+
+Sets the network timeout for all server requests using a `Dates.Period` type (e.g., `Second(15)`).
+"""
+function set_timeout(store::ClientDataStore, period::Period)
+    # Convert the period to milliseconds and call the integer-based method
+    set_timeout(store, Dates.value(Millisecond(period)))
+end
+
 
 function authenticate(store::ClientDataStore)
     status = ccall((:lic_client_authenticate, liblicclient_path), Status, (Ptr{Cvoid},), store.handle)
