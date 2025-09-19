@@ -107,7 +107,7 @@ function set_timeout(store::ClientDataStore, milliseconds::Integer)
         throw(ArgumentError("Timeout must be non-negative."))
     end
     # The C function expects a 64-bit integer
-    ccall((:lic_client_set_timeout, liblicclient_path), Cvoid, (Ptr{Cvoid}, Cintmax_t), store.handle, milliseconds)
+    ccall((:lic_client_set_timeout, liblicclient_path), Cvoid, (Ptr{Cvoid}, Int64), store.handle, milliseconds)
 end
 
 """
